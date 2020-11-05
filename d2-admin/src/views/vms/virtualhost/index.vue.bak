@@ -1,21 +1,22 @@
 <template>
   <d2-container type="card">
-    <template slot="header">存储</template>
+    <template slot="header">虚拟机</template>
     <div class="handle-head">
       <div class="filter">
-        <el-select v-model="table.getParams.datacenter__name" filterable class="d2-mr-5" size="mini"  placeholder="请选择数据中心"  @change="getDatastoreData">
+        <el-select v-model="table.getParams.datacenter__name" filterable class="d2-mr-5" size="mini"  placeholder="请选择数据中心"  @change="getVirtualhostData">
           <el-option
             v-for="item in TreeData"
             :key="item.value"
             :label="item.label"
             :value="item.value"
+            v-show="table.data.length>0"
           >
           </el-option>
         </el-select>
       </div>
       <div class="search" >
-        <el-input v-model="table.getParams.search" placeholder="请输入存储名"  class="handle-input mr5" size="mini"  ></el-input>
-        <el-button icon="el-icon-search"  size="mini" circle @click="getDatastoreData" style="margin-left: 10px"></el-button>
+        <el-input v-model="table.getParams.search" placeholder="请输入虚拟机名称"  class="handle-input mr5" size="mini"  ></el-input>
+        <el-button icon="el-icon-search"  size="mini" circle @click="getVirtualhostData" style="margin-left: 10px"></el-button>
         <el-button size="mini"  icon="el-icon-refresh" circle @click="refreshClick"></el-button>
       </div>
       <div class="download">
@@ -30,14 +31,33 @@
       @sort-change="changeTableSort"
       v-if="table.data.length>0"
     >
-      <el-table-column
-        v-for="(item,index) in table.columns"
-        :sortable=item.sort
-        :key="index"
-        :prop="item.prop"
-        :label="item.label"
-        :width="item.width"
-        show-overflow-tooltip>
+      <el-table-column prop="name" label="虚拟机名" width="200"></el-table-column>
+      <el-table-column prop="datacenter" label="数据中心" width="200"></el-table-column>
+      <el-table-column prop="host" label="宿主机" width="150"></el-table-column>
+      <el-table-column prop="ip" label="IP" width="150"></el-table-column>
+      <el-table-column prop="powerState" label="电源状态" width="110">
+        <template slot-scope="scope">
+          <div slot="referehce" class="name-wapper" style="text-align: left">
+            <el-tag style="color: #000" :color="POWER_STATE[scope.row.powerState].color">
+              {{POWER_STATE[scope.row.powerState].type}}
+            </el-tag>
+          </div>
+        </template>
+      </el-table-column>
+      <el-table-column prop="cpunums" label="CPU数" width="110"></el-table-column>
+      <el-table-column prop="memtotal" label="内存" width="110" sortable="custom"></el-table-column>
+      <el-table-column prop="os" label="系统" width="250"></el-table-column>
+      <el-table-column prop="cpuusage" label="CPU用量" width="130"></el-table-column>
+      <el-table-column prop="memusage" label="内存用量" width="130"></el-table-column>
+      <el-table-column prop="store_usage" label="存储用量" width="130" sortable="custom"></el-table-column>
+      <el-table-column prop="status" label="状态" width="130">
+        <template slot-scope="scope">
+          <div slot="referehce" class="name-wapper" style="text-align: left">
+            <el-tag style="color: #000" :color="VIRTUAL_STATUS[scope.row.status].color">
+              {{VIRTUAL_STATUS[scope.row.status].type}}
+            </el-tag>
+          </div>
+        </template>
       </el-table-column>
     </el-table>
     <div class="d2-crud-footer">
@@ -57,14 +77,14 @@
 </template>
 
 <script>
+import { getvirtualhost,gettreedata } from '@api/vms'
 import Vue from 'vue'
-import { getdatastore,gettreedata } from '@api/vms'
 import pluginExport from '@d2-projects/vue-table-export'
 Vue.use(pluginExport)
 export default {
-name: 'datastore',
+name: 'virtualhost',
   created () {
-    this.getDatastoreData();
+    this.getVirtualhostData();
     this.getTreeData();
   },
   data() {
@@ -72,12 +92,19 @@ name: 'datastore',
       TreeData:[],
       table: {
         columns:[
-          //{label:'ID',prop:'id',sort:'custom'},
-          {label:'存储名',prop:'name',sort:false},
-          {label: '数据中心',prop: 'datacenter',sort: false},
-          {label:'存储总计',prop:'capacity',sort: false},
-          {label:'存储剩余量',prop:'freespace',sort: 'custom'},
-
+          //{label:'ID',prop:'id',sort:"custom",},
+          {label:'虚拟机名',prop:'name',},
+          {label:'数据中心',prop:'datacenter',},
+          {label:'宿主机',prop:'host',},
+          {label: 'IP',prop: 'ip',},
+          {label:'电源状态',prop:'powerState',},
+          {label:'CPU核数',prop:'cpunums',},
+          {label:'内存',prop:'memtotal',},
+          {label:'系统',prop:'os',},
+          {label:'CPU用量',prop:'cpuusage',},
+          {label:'内存用量',prop:'memusage',},
+          {label:'存储用量',prop:'store_usage',},
+          {label: '状态',prop: 'status',}
         ],
         data : [],
         size: 'mini',
@@ -92,6 +119,14 @@ name: 'datastore',
         },
         total:0,
 
+      },
+      VIRTUAL_STATUS: {
+        'green' :{'color':'#67C23A','type':'正常'},
+        'yellow' :{'color':'#E6A23C','type':'异常'}
+      },
+      POWER_STATE: {
+        'poweredOn':{'color':'#67C23A',type:'已开机'},
+        'poweredOff':{'color':'#E6A23C',type:"已关机"}
       }
     }
   },
@@ -101,16 +136,18 @@ name: 'datastore',
       this.$export.excel({
         columns: this.table.columns,
         data: this.table.data,
-        title: '存储列表'
+        title: '虚拟机列表'
       }).then(()=>{
         this.$message('表格导出成功')
       })
     },
-    //获取集群信息
-    getDatastoreData() {
-      getdatastore(this.table.getParams).then(res=>{
+    //获取所以虚拟机信息
+    getVirtualhostData() {
+      getvirtualhost (this.table.getParams).then(res=>{
+        console.log(this.table.getParams)
         this.table.data = res.results;
         this.table.total = res.count;
+        console.log(this.table.data)
       }).catch(function (error){
         console.log(error)
       })
@@ -129,15 +166,15 @@ name: 'datastore',
         ordering:'',
         datacenter__name: ''
       };
-      this.getDatastoreData();
+      this.getVirtualhostData();
     },
     handleCurrentChange(page){
       this.table.getParams.page=page
-      this.getDatastoreData();
+      this.getVirtualhostData();
     },
     handleSizeChange(size){
       this.table.getParams.page_size = size
-      this.getDatastoreData();
+      this.getVirtualhostData();
     },
     //对指定字段排序
     changeTableSort (column) {
@@ -148,13 +185,13 @@ name: 'datastore',
       //按照降序排序
       if (sortingType === "descending") {
         this.table.getParams.ordering = '-' + fieldName
-        this.getDatastoreData();
+        this.getVirtualhostData();
         // this.table.data = this.table.data.sort((a, b) => b[fieldName] - a[fieldName]);
       }
       //按照升序排序
       else {
         this.table.getParams.ordering = fieldName
-        this.getDatastoreData();
+        this.getVirtualhostData();
         //this.table.data = this.table.data.sort((a, b) => a[fieldName] - b[fieldName]);
 
       }
@@ -176,16 +213,12 @@ name: 'datastore',
 .handle-head {
   padding-bottom: 5px;
 }
-.pagination {
-  float: right;
-  margin-top: 20px;
-}
-.search {
-  float: left;
-}
 .filter {
   float: left;
   margin-right: 10px;
+}
+.search {
+  float: left;
 }
 .handle-input {
   width: 300px;

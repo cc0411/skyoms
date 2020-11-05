@@ -5,12 +5,18 @@
       <el-button type="primary" size="mini" round @click="exportExcel">
         <d2-icon name="download"/>导出Excel
       </el-button>
+      <el-popover placement="top-end" width="50" trigger="click" style="margin-left: 5px">
+        <el-checkbox-group v-model="colOptions">
+          <el-checkbox v-for="item in colSelect" :label="item" :key="item"></el-checkbox>
+        </el-checkbox-group>
+        <el-button slot="reference" type="info" size="mini"  circle icon="el-icon-setting"></el-button>
+      </el-popover>
     </div>
     <el-table
+      ref="datacenterTable"
       :data="table.data"
       style="width: 100%"
-      :default-sort = "{prop: 'id', order: 'descending'}"
-      v-if="table.data.length>0"
+      v-show="table.data.length>0"
       @sort-change="changeTableSort"
     >
       <el-table-column
@@ -19,7 +25,8 @@
         :sortable=item.sort
         :prop="item.prop"
         :label="item.label"
-        :width="item.width">
+        :width="item.width"
+        v-if="item.istrue">
       </el-table-column>
     </el-table>
     <div class="d2-crud-footer">
@@ -47,22 +54,45 @@ export default {
 name: 'datacenter',
   created () {
     this.getDatacenterData();
+    for (let i = 0; i < this.table.columns.length; i++) {
+      this.colSelect.push(this.table.columns[i].label);
+      this.colOptions.push(this.table.columns[i].label);
+    }
+  },
+  watch: {
+    colOptions(valArr){
+      var that = this;
+      var arr = that.colSelect.filter(i=>valArr.indexOf(i)<0);
+      that.table.columns.filter(i=>{
+        if (arr.indexOf(i.label) !== -1){
+          i.istrue=false;
+        }else {
+          i.istrue = true;
+        }
+      });
+      this.$nextTick(() => {
+        this.$refs.datacenterTable.doLayout();
+
+      });
+    }
   },
   data() {
     return {
+      colOptions: [],
+      colSelect: [],
       table: {
         columns:[
           //{label:'ID',prop:'id'},
-          {label:'数据中心',prop:'name',width:'150',sort:false,},
-          {label:'CPU总计',prop:'cputotal',width:'130',sort:false,},
-          {label:'CPU使用量',prop:'cpuusage',width:'130',sort:false},
-          {label:'内存总计',prop:'memtotal',width:'130',sort:false},
-          {label:'内存使用量',prop:'memusage',width:'130',sort:false},
-          {label:'存储总计',prop:'datatotal',width:'130',sort:false},
-          {label:'存储剩余量',prop:'datafree',width:'130',sort:"custom",},
-          {label:'宿主机数量',prop:'numhosts',width:'130',sort:"custom",},
-          {label:'虚拟机数量',prop:'vmscount',width:'130',sort:"custom",},
-          {label:'CPU总核数',prop:'numcpuscores',width:'110',sort:false},
+          {label:'数据中心',prop:'name',width:'150',sort:false,istrue: true},
+          {label:'CPU总计',prop:'cputotal',width:'130',sort:false,istrue: true},
+          {label:'CPU使用量',prop:'cpuusage',width:'130',sort:false,istrue: true},
+          {label:'内存总计',prop:'memtotal',width:'130',sort:false,istrue: true},
+          {label:'内存使用量',prop:'memusage',width:'130',sort:false,istrue: true},
+          {label:'存储总计',prop:'datatotal',width:'130',sort:false,istrue: true},
+          {label:'存储剩余量',prop:'datafree',width:'130',sort:"custom",istrue: true},
+          {label:'宿主机数量',prop:'numhosts',width:'130',sort:"custom",istrue: true},
+          {label:'虚拟机数量',prop:'vmscount',width:'130',sort:"custom",istrue: true},
+          {label:'CPU总核数',prop:'numcpuscores',width:'110',sort:false,istrue: true},
 
         ],
         data : [],

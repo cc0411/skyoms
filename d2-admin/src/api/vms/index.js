@@ -62,3 +62,10 @@ export function  getdataresource(params) {
     params
   })
 }
+export function  gettreedata(params) {
+  return request ({
+    url: process.env.VUE_APP_BASE_API + '/api/vms/gettreedata/',
+    method: 'get',
+    params
+  })
+}

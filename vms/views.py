@@ -116,3 +116,17 @@ class GetDatastoreResource(View):
             json_dict["使用率"] = "%.2f%%" %(usagespace/totalspace*100)
             json_list.append(json_dict)
         return HttpResponse(json.dumps(json_list), content_type='application/json')
+
+class GetDatacenterTreeData(View):
+    '''
+    获取所有数据中心列表用于前端过滤
+    '''
+    def get(self,request):
+        json_list = []
+        data = DataCenters.objects.all()
+        for d in data:
+            json_dict = {}
+            json_dict["value"] = d.name
+            json_dict["label"] = d.name
+            json_list.append(json_dict)
+        return  HttpResponse(json.dumps(json_list),content_type='application/json')

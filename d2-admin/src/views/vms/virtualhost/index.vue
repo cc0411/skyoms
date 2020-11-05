@@ -2,6 +2,17 @@
   <d2-container type="card">
     <template slot="header">虚拟机</template>
     <div class="handle-head">
+      <div class="filter">
+        <el-select v-model="table.getParams.datacenter__name" filterable class="d2-mr-5" size="mini"  placeholder="请选择数据中心"  @change="getVirtualhostData">
+          <el-option
+            v-for="item in TreeData"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value"
+          >
+          </el-option>
+        </el-select>
+      </div>
       <div class="search" >
         <el-input v-model="table.getParams.search" placeholder="请输入虚拟机名称"  class="handle-input mr5" size="mini"  ></el-input>
         <el-button icon="el-icon-search"  size="mini" circle @click="getVirtualhostData" style="margin-left: 10px"></el-button>
@@ -11,13 +22,20 @@
         <el-button type="primary" size="mini" round @click="exportExcel">
           <d2-icon name="download"/>导出Excel
         </el-button>
+        <el-popover placement="top-end" width="50" trigger="click" style="margin-left: 5px">
+          <el-checkbox-group v-model="colOptions">
+            <el-checkbox v-for="item in colSelect" :label="item" :key="item"></el-checkbox>
+          </el-checkbox-group>
+          <el-button slot="reference" type="info" size="mini"  circle icon="el-icon-setting"></el-button>
+        </el-popover>
       </div>
     </div>
     <el-table
+      ref="virtualTable"
       :data="table.data"
       style="width: 100%"
       @sort-change="changeTableSort"
-      v-if="table.data.length>0"
+      v-show="table.data.length>0"
     >
       <el-table-column
         v-for="(item,index) in table.columns"
@@ -26,7 +44,21 @@
         :prop="item.prop"
         :label="item.label"
         :width="item.width"
-        show-overflow-tooltip>
+        v-if="item.istrue"
+        >
+        <template slot-scope="scope">
+          <div v-if="(item.prop==='status')" slot="referehce" class="name-wapper" style="text-align: left">
+            <el-tag style="color: #000" :color="VIRTUAL_STATUS[scope.row[item.prop]].color">
+              {{VIRTUAL_STATUS[scope.row[item.prop]].type}}
+            </el-tag>
+          </div>
+          <div v-else-if="(item.prop==='powerState')" slot="referehce" class="name-wapper" style="text-align: left">
+            <el-tag style="color: #000" :color="POWER_STATE[scope.row[item.prop]].color">
+              {{POWER_STATE[scope.row[item.prop]].type}}
+            </el-tag>
+          </div>
+          <span v-else>{{scope.row[item.prop]}}</span>
+        </template>
       </el-table-column>
     </el-table>
     <div class="d2-crud-footer">
@@ -46,32 +78,57 @@
 </template>
 
 <script>
-import { getvirtualhost } from '@api/vms'
+import { gettreedata, getvirtualhost } from '@api/vms'
 import Vue from 'vue'
 import pluginExport from '@d2-projects/vue-table-export'
 Vue.use(pluginExport)
 export default {
-name: 'virtualhost',
+  name: 'virtualhost',
   created () {
     this.getVirtualhostData();
+    this.getTreeData();
+    for (let i = 0; i < this.table.columns.length; i++) {
+      this.colSelect.push(this.table.columns[i].label);
+      this.colOptions.push(this.table.columns[i].label);
+    }
+  },
+  watch: {
+    colOptions(valArr){
+      var that = this;
+      var arr = that.colSelect.filter(i=>valArr.indexOf(i)<0);
+      that.table.columns.filter(i=>{
+        if (arr.indexOf(i.label) !== -1){
+          i.istrue=false;
+        }else {
+          i.istrue = true;
+        }
+      });
+      this.$nextTick(() => {
+        this.$refs.virtualTable.doLayout();
+
+      });
+    }
   },
   data() {
     return {
+      colOptions: [],
+      colSelect: [],
+      TreeData:[],
       table: {
         columns:[
           //{label:'ID',prop:'id',sort:"custom",},
-          {label:'虚拟机名',prop:'name',sort:false,width:200},
-          {label:'数据中心',prop:'datacenter',sort:false,width:200},
-          {label:'宿主机',prop:'host',sort:false,width:200},
-          {label: 'IP',prop: 'ip',sort: false,width:200},
-          {label:'电源状态',prop:'powerState',sort:false,width:200},
-          {label:'CPU核数',prop:'cpunums',sort:false,width:110},
-          {label:'内存',prop:'memtotal',sort:'custom',width:130},
-          {label:'系统',prop:'os',sort:false,width:200},
-          {label:'CPU用量',prop:'cpuusage',sort:false,width:130},
-          {label:'内存用量',prop:'memusage',sort:false,width:130},
-          {label:'存储用量',prop:'store_usage',sort:'custom',width:130},
-          {label: '状态',prop: 'status',sort: false,width:120}
+          {label:'虚拟机名',prop:'name',sort:false,width:300,istrue: true},
+          {label:'数据中心',prop:'datacenter',sort:false,width:150,istrue: true},
+          {label:'宿主机',prop:'host',sort:false,width:130,istrue: true},
+          {label: 'IP',prop: 'ip',sort: false,width:130,istrue: true},
+          {label:'电源状态',prop:'powerState',sort:false,width:110,istrue: true},
+          {label:'CPU核数',prop:'cpunums',sort:false,width:110,istrue: true},
+          {label:'内存',prop:'memtotal',sort:'custom',width:110,istrue: true},
+          {label:'系统',prop:'os',sort:false,width:300,istrue: true},
+          {label:'CPU用量',prop:'cpuusage',sort:false,width:130,istrue: true},
+          {label:'内存用量',prop:'memusage',sort:false,width:130,istrue: true},
+          {label:'存储用量',prop:'store_usage',sort:'custom',width:130,istrue: true},
+          {label: '状态',prop: 'status',sort: false,width:120,istrue: true}
         ],
         data : [],
         size: 'mini',
@@ -81,10 +138,18 @@ name: 'virtualhost',
           page:1,
           page_size:10,
           search:'',
-          ordering:''
+          ordering:'',
+          datacenter__name: ''
         },
         total:0,
-
+      },
+      VIRTUAL_STATUS: {
+        'green' :{'color':'#67C23A','type':'正常'},
+        'yellow' :{'color':'#E6A23C','type':'异常'}
+      },
+      POWER_STATE: {
+        'poweredOn':{'color':'#67C23A',type:'已开机'},
+        'poweredOff':{'color':'#E6A23C',type:"已关机"}
       }
     }
   },
@@ -110,12 +175,19 @@ name: 'virtualhost',
         console.log(error)
       })
     },
+    getTreeData() {
+      gettreedata().then(res=>{
+        console.log(res)
+        this.TreeData = res
+      })
+    },
     refreshClick(){
       this.table.getParams = {
         page:1,
         page_size:10,
         search:'',
-        ordering:''
+        ordering:'',
+        datacenter__name: ''
       };
       this.getVirtualhostData();
     },
@@ -144,7 +216,6 @@ name: 'virtualhost',
         this.table.getParams.ordering = fieldName
         this.getVirtualhostData();
         //this.table.data = this.table.data.sort((a, b) => a[fieldName] - b[fieldName]);
-
       }
     },
   }
@@ -162,6 +233,10 @@ name: 'virtualhost',
 .search {
   float: left;
 }
+.filter {
+  float: left;
+  margin-right: 10px;
+}
 .handle-input {
   width: 300px;
   display: inline-block;
@@ -172,5 +247,4 @@ name: 'virtualhost',
   margin-inside: 5px;
   float: right;
 }
-
 </style>
