@@ -8,7 +8,7 @@ export default {
      * @param {Object} state state
      */
     versionShow () {
-      util.log.capsule('D2Admin', `v${process.env.VUE_APP_VERSION}`)
+      util.log.capsule('Skyoms', `v${process.env.VUE_APP_VERSION}`)
     }
   }
 }

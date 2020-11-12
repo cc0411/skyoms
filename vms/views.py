@@ -24,7 +24,7 @@ class DataStoresViewSet(BaseView):
     serializer_class = DataStoresSerializer
     filter_fields = ['datacenter__name',]
     search_fields = ('name',)
-    ordering_fields = ('ctime','freespace')
+    ordering_fields = ('ctime','freespace',)
 
 
 class NetworkAdaptersViewSet(BaseView):
@@ -86,10 +86,10 @@ class GetDedicatedhostResource(View):
         for h in  hosts:
             json_dict ={}
             json_dict["主机名"] = h.name
-            json_dict["cpu总计/GHz"] = float(re.sub('[^0-9.]',"",h.cputotal))
-            json_dict["cpu已用/GHz"] = float(re.sub('[^0-9.]',"",h.cpuusage))
-            json_dict["内存总计/G"] = float(re.sub('[^0-9.]',"",h.memtotal))
-            json_dict["内存已用/G"] = float(re.sub('[^0-9.]',"",h.memusage))
+            json_dict["cpu总计/GHz"] = h.cputotal
+            json_dict["cpu已用/GHz"] = h.cpuusage
+            json_dict["内存总计/G"] = h.memtotal
+            json_dict["内存已用/G"] = h.memusage
             json_list.append(json_dict)
         return HttpResponse(json.dumps(json_list),content_type='application/json')
 
@@ -107,13 +107,10 @@ class GetDatastoreResource(View):
             data = DataStores.objects.all()
         for d in data:
             json_dict ={}
-            totalspace = float(re.sub('[^0-9.]',"",d.capacity))
-            freespace = float(re.sub('[^0-9.]',"",d.freespace))
-            usagespace = totalspace-freespace
             json_dict["存储名"] = d.name
-            json_dict["总空间"] = totalspace
-            json_dict["剩余空间"] = freespace
-            json_dict["使用率"] = "%.2f%%" %(usagespace/totalspace*100)
+            json_dict["总空间"] = d.capacity
+            json_dict["剩余空间"] = d.freespace
+            json_dict["剩余率"] = "%.2f%%" %(d.freespace/d.capacity*100)
             json_list.append(json_dict)
         return HttpResponse(json.dumps(json_list), content_type='application/json')
 

@@ -161,6 +161,13 @@ def CollectPhysicsinfo(host,user,pwd):
             obj.save()
         else:
 
-            obj.datastore.set(datastore_obj)
-            obj.save()
+            obj=Dedicatedhosts.objects.filter(name=name)
+            obj.update(datacenter=datacenter, cluster=cluster,
+                                                conState=conState, powerState=powerState, uuid=uuid,
+                                                cpumodel=cpumodel, vendor=vendor, cpunums=cpunums,
+                                                cpucores=cpucores, cputhreads=cputhreads, cputotal=cputotal,
+                                                cpuusage=cpuusage, memtotal=memtotal, memusage=memusage,
+                                                status=status, os=os)
+            obj.first().datastore.set(datastore_obj)
+            obj.first().save()
     return "Physicsinfo----%s采集成功"  %host

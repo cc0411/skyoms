@@ -86,7 +86,7 @@ class UserRouter(models.Model):
     title = models.CharField(max_length=30, verbose_name=u'路由中文标题')
     auth = models.BooleanField(default=True, verbose_name=u'是否需要验证')
     component = models.CharField(max_length=50, verbose_name=u'路由关联的页面组件')
-    permission = models.ForeignKey(Permission, null=True, blank=True, on_delete=models.SET_NULL, verbose_name=u'路由关联权限')
+    permission = models.ForeignKey(Permission, null=True, blank=True, verbose_name=u'路由关联权限',on_delete=models.SET_NULL,)
 
     class Meta:
         db_table = 'users_router'
@@ -122,3 +122,19 @@ class UserProfile(AbstractUser):
         verbose_name = u'用户表'
         verbose_name_plural = verbose_name
         db_table = 'user_profile'
+
+
+class LoginRecord(models.Model):
+    '''
+    登陆日志
+    '''
+    user = models.ForeignKey(UserProfile,verbose_name='用户',on_delete=models.CASCADE)
+    ip = models.GenericIPAddressField(verbose_name='登陆地址')
+    login_time = models.DateTimeField(verbose_name='登陆时间')
+    action = models.CharField(max_length=32,verbose_name='action',default='***login***')
+    def __str__(self):
+        return self.user.username
+    class Meta:
+        db_table ='login_record'
+        verbose_name_plural = '登陆日志'
+        verbose_name = verbose_name_plural

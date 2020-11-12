@@ -4,9 +4,16 @@
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
 from collections import OrderedDict
-
+from .models import LoginRecord
 
 User = get_user_model()
+
+class LoginRecordSerializer(serializers.ModelSerializer):
+    user = serializers.SlugRelatedField(many=False, read_only=True, slug_field='username')
+    class Meta:
+        model = LoginRecord
+        fields = '__all__'
+
 class UserSerializer(serializers.ModelSerializer):
 
     class Meta:

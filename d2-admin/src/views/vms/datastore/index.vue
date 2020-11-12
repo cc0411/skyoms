@@ -5,7 +5,7 @@
       <div class="filter">
         <el-select v-model="table.getParams.datacenter__name" filterable class="d2-mr-5" size="mini"  placeholder="请选择数据中心"  @change="getDatastoreData">
           <el-option
-            v-for="item in TreeData"
+            v-for="item in treeData"
             :key="item.value"
             :label="item.label"
             :value="item.value"
@@ -38,6 +38,12 @@
         :label="item.label"
         :width="item.width"
         show-overflow-tooltip>
+        <template slot-scope="scope">
+          <div v-if="(item.prop==='rate')" slot="referehce" class="name-wapper">
+            <el-progress :percentage="scope.row.rate" :text-inside="true" :stroke-width="15" :color="customColorMethod"></el-progress>
+          </div>
+          <span v-else>{{scope.row[item.prop]}}</span>
+        </template>
       </el-table-column>
     </el-table>
     <div class="d2-crud-footer">
@@ -58,25 +64,32 @@
 
 <script>
 import Vue from 'vue'
-import { getdatastore,gettreedata } from '@api/vms'
+import { getdatastore } from '@api/vms'
+import {createNamespacedHelpers} from 'vuex'
+const {mapState} = createNamespacedHelpers('d2admin')
 import pluginExport from '@d2-projects/vue-table-export'
 Vue.use(pluginExport)
 export default {
 name: 'datastore',
   created () {
     this.getDatastoreData();
-    this.getTreeData();
+    this.$store.dispatch('d2admin/fetTreeData')
+  },
+  computed:{
+    ...mapState({
+      treeData: state=>state.vm.treeData
+    })
   },
   data() {
     return {
-      TreeData:[],
       table: {
         columns:[
           //{label:'ID',prop:'id',sort:'custom'},
           {label:'存储名',prop:'name',sort:false},
           {label: '数据中心',prop: 'datacenter',sort: false},
-          {label:'存储总计',prop:'capacity',sort: false},
-          {label:'存储剩余量',prop:'freespace',sort: 'custom'},
+          {label:'存储总计/T',prop:'capacity',sort: false},
+          {label:'存储剩余量/T',prop:'freespace',sort: 'custom'},
+          {label: '剩余率',prop:'rate',sort: false,width:'300'}
 
         ],
         data : [],
@@ -115,12 +128,6 @@ name: 'datastore',
         console.log(error)
       })
     },
-    getTreeData() {
-      gettreedata().then(res=>{
-        console.log(res)
-        this.TreeData = res
-      })
-    },
     refreshClick(){
       this.table.getParams = {
         page:1,
@@ -141,7 +148,6 @@ name: 'datastore',
     },
     //对指定字段排序
     changeTableSort (column) {
-      console.log(column);
       //  获取字段名和排序类型
       var fieldName = column.prop;
       var sortingType = column.order;
@@ -159,6 +165,18 @@ name: 'datastore',
 
       }
     },
+    customColorMethod(size){
+      if(size<30){
+        return '#EE0000';
+      }
+      else if(size<60){
+        return '#EEC900';
+      }
+      else{
+        return '#00EE00';
+      }
+
+    }
   }
 }
 </script>

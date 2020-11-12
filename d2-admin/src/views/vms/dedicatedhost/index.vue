@@ -5,7 +5,7 @@
       <div class="filter">
         <el-select v-model="table.getParams.datacenter__name" filterable class="d2-mr-5" size="mini"  placeholder="请选择数据中心"  @change="getDedicatedhostData">
           <el-option
-            v-for="item in TreeData"
+            v-for="item in treeData"
             :key="item.value"
             :label="item.label"
             :value="item.value"
@@ -83,15 +83,17 @@
 </template>
 
 <script>
-import { getdedicatedhost, gettreedata } from '@api/vms'
+import { getdedicatedhost } from '@api/vms'
 import Vue from 'vue'
 import pluginExport from '@d2-projects/vue-table-export'
+import {createNamespacedHelpers} from 'vuex'
+const {mapState} = createNamespacedHelpers('d2admin')
 Vue.use(pluginExport)
 export default {
   name: 'dedicatedhost',
   created () {
     this.getDedicatedhostData();
-    this.getTreeData();
+    this.$store.dispatch('d2admin/fetTreeData')
     for (let i = 0; i < this.table.columns.length; i++) {
       this.colSelect.push(this.table.columns[i].label);
       this.colOptions.push(this.table.columns[i].label);
@@ -114,11 +116,15 @@ export default {
       });
     }
   },
+  computed:{
+    ...mapState({
+      treeData: state=>state.vm.treeData
+    })
+  },
   data() {
     return {
       colOptions: [],
       colSelect: [],
-      TreeData:[],
       table: {
         columns:[
           //{label:'ID',prop:'id',sort:"custom",},
@@ -131,10 +137,10 @@ export default {
           {label:'CPU类型',prop:'cpumodel',sort:false,width:350,istrue: true},
           {label:'CPU数量',prop:'cpunums',sort:false,width:110,istrue: true},
           {label:'CPU核数',prop:'cpucores',sort:false,width: 110,istrue: true},
-          {label:'CPU总量',prop:'cputotal',sort:false,width: 130,istrue: true},
-          {label:'CPU用量',prop:'cpuusage',sort:"custom",width:130,istrue: true},
-          {label:'内存总量',prop:'memtotal',sort:false,width: 130,istrue: true},
-          {label:'内存用量',prop:'memusage',sort:"custom",width:130,istrue: true},
+          {label:'CPU总量/Ghz',prop:'cputotal',sort:false,width: 130,istrue: true},
+          {label:'CPU用量/Ghz',prop:'cpuusage',sort:"custom",width:130,istrue: true},
+          {label:'内存总量/G',prop:'memtotal',sort:false,width: 130,istrue: true},
+          {label:'内存用量/G',prop:'memusage',sort:"custom",width:130,istrue: true},
           {label: '状态',prop:'status',sort: false,width: 110,istrue: true},
 
         ],
@@ -179,18 +185,10 @@ export default {
     //获取宿主机信息
     getDedicatedhostData() {
       getdedicatedhost(this.table.getParams).then(res=>{
-        console.log(this.table.getParams)
         this.table.data = res.results;
         this.table.total = res.count;
-        console.log(this.table.data)
       }).catch(function (error){
         console.log(error)
-      })
-    },
-    getTreeData() {
-      gettreedata().then(res=>{
-        console.log(res)
-        this.TreeData = res
       })
     },
     refreshClick(){
@@ -213,7 +211,6 @@ export default {
     },
     //对指定字段排序
     changeTableSort (column) {
-      console.log(column);
       //  获取字段名和排序类型
       var fieldName = column.prop;
       var sortingType = column.order;

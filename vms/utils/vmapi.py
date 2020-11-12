@@ -67,12 +67,12 @@ class VcenterApi(object):
                 "overallstatus": summary.overallStatus,
                 "numhosts": summary.numHosts,
                 "numcpucores": summary.numCpuCores,
-                "cputotal": "%.2f GHz" % (summary.totalCpu / 1000.0),
-                "cpuusage": "%.2f GHz" % (cpuusage / 1000.0),
-                "memtotal": "%.2f GB" % (summary.totalMemory / 1024 / 1024 / 1024.0),
-                "memusage": "%.2f GB" % (memusage / 1024.0),
-                "totaldatastore": "%.2f T" % (totaldatastore / 1024 / 1024 / 1024 / 1024.0),
-                "datastorefree": "%.2f T" % (datastorefree / 1024 / 1024 / 1024 / 1024.0),
+                "cputotal": "%.2f" % (summary.totalCpu / 1000.0),
+                "cpuusage": "%.2f" % (cpuusage / 1000.0),
+                "memtotal": "%.2f" % (summary.totalMemory / 1024 / 1024 / 1024.0),
+                "memusage": "%.2f" % (memusage / 1024.0),
+                "totaldatastore": "%.2f" % (totaldatastore / 1024 / 1024 / 1024 / 1024.0),
+                "datastorefree": "%.2f" % (datastorefree / 1024 / 1024 / 1024 / 1024.0),
                 "vmcount": vmcount,
                 "datacentername": self.datacentername,
                 }
@@ -181,12 +181,12 @@ class VcenterApi(object):
             datastorefree += datastore.summary.freeSpace
 
         return {
-            "cputotal": "%.2f GHz" % (cputotal / 1000.0),
-            "cpuusage": "%.2f GHz" % (cpuusage / 1000.0),
-            "memtotal": "%.2f GB" % (memtotal / 1024 / 1024 / 1024.0),
-            "memusage": "%.2f GB" % (memusage / 1024.0),
-            "totaldatastore": "%.2f T" % (totaldatastore/1024/1024/1024/1024.0),
-            "datastorefree": "%.2f T" % (datastorefree/1024/1024/1024/1024.0),
+            "cputotal": "%.2f" % (cputotal / 1000.0),
+            "cpuusage": "%.2f" % (cpuusage / 1000.0),
+            "memtotal": "%.2f" % (memtotal / 1024 / 1024 / 1024.0),
+            "memusage": "%.2f" % (memusage / 1024.0),
+            "totaldatastore": "%.2f" % (totaldatastore/1024/1024/1024/1024.0),
+            "datastorefree": "%.2f" % (datastorefree/1024/1024/1024/1024.0),
             "numhosts": numHosts,
             "numcpucores": numCpuCores,
             "vmcount": self.get_vm_count(),
@@ -202,8 +202,8 @@ class VcenterApi(object):
         cluster_store_dict = {}
         datastore_list = []
         for i in objs:
-            capacity = "%.2f G" % (i.summary.capacity/1024/1024/1024.0)
-            freespace = "%.2f G" % (i.summary.freeSpace/1024/1024/1024.0)
+            capacity = "%.2f" % (i.summary.capacity/1024/1024/1024/1024.0)
+            freespace = "%.2f" % (i.summary.freeSpace/1024/1024/1024/1024.0)
             datastore_summary = {
                 "cluster_store_name": "默认集群目录" if i.parent.name=="datastore" else i.parent.name,
                 "datacentername": self.datacentername,
@@ -247,12 +247,12 @@ class VcenterApi(object):
             # cpuMhz
             cpumhz = host.summary.hardware.cpuMhz
             # cpu总Ghz
-            cpusize ="%.2f GHz" % (host.summary.hardware.cpuMhz * host.summary.hardware.numCpuCores/1000.0)
+            cpusize ="%.2f" % (host.summary.hardware.cpuMhz * host.summary.hardware.numCpuCores/1000.0)
             # 使用cpu
-            cpuusage = "%.2f GHz" % (host.summary.quickStats.overallCpuUsage/1000.0)
+            cpuusage = "%.2f" % (host.summary.quickStats.overallCpuUsage/1000.0)
             # 内存大小 G
-            memorysize = "%.2f G" % (host.summary.hardware.memorySize / 1024 / 1024 / 1024.0)
-            memusage =  "%.2f G" % (host.summary.quickStats.overallMemoryUsage/1024.0)
+            memorysize = "%.2f" % (host.summary.hardware.memorySize / 1024 / 1024 / 1024.0)
+            memusage =  "%.2f" % (host.summary.quickStats.overallMemoryUsage/1024.0)
             # 运行时间
             uptime = host.summary.quickStats.uptime
             overallStatus = host.summary.overallStatus
@@ -372,17 +372,17 @@ class VcenterApi(object):
             # cpu 颗数
             numcpu = vm_machine.summary.config.numCpu
             # 内存总大小
-            memtotal= "%d MB" %(vm_machine.summary.config.memorySizeMB)
+            memtotal= "%d" %(vm_machine.summary.config.memorySizeMB/1024)
             # 网卡数
             numethernetcards = vm_machine.summary.config.numEthernetCards
             # 虚拟磁盘数量
             numvirtualdisks = vm_machine.summary.config.numVirtualDisks
             # 已使用存储容量
-            storage_usage = "%.2fG" % (vm_machine.summary.storage.committed/1024/1024/1024.0)
+            storage_usage = "%.2f" % (vm_machine.summary.storage.committed/1024/1024/1024.0)
             # cpu使用Mhz
-            cpuusage = '%d Mhz' %(vm_machine.summary.quickStats.overallCpuUsage)
+            cpuusage = '%d' %(vm_machine.summary.quickStats.overallCpuUsage)
             # MB
-            memusage = '%d MB' %(vm_machine.summary.quickStats.guestMemoryUsage)
+            memusage = '%d' %(vm_machine.summary.quickStats.guestMemoryUsage)
             # 开机时间
             uptime = vm_machine.summary.quickStats.uptimeSeconds
             # 运行状态

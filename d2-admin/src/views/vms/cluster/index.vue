@@ -5,7 +5,7 @@
       <div class="filter">
         <el-select v-model="table.getParams.datacenter__name" filterable class="d2-mr-5" size="mini"  placeholder="请选择数据中心"  @change="getClusterData">
           <el-option
-            v-for="item in TreeData"
+            v-for="item in treeData"
             :key="item.value"
             :label="item.label"
             :value="item.value"
@@ -39,12 +39,13 @@
     >
       <el-table-column
         v-for="(item,index) in table.columns"
-        :sortable=item.sort
+        :sortable="item.sort"
         :key="index"
         :prop="item.prop"
         :label="item.label"
         :width="item.width"
         v-if="item.istrue"
+        align="center"
         show-overflow-tooltip>
         <template slot-scope="scope">
           <div v-if="(item.prop==='overallstatus')" slot="referehce" class="name-wapper" style="text-align: left">
@@ -56,7 +57,6 @@
         </template>
       </el-table-column>
     </el-table>
-    <div class="d2-crud-footer">
       <div class="d2-crud-pagination">
         <el-pagination
           @size-change="handleSizeChange"
@@ -68,21 +68,23 @@
           :total="table.total">
         </el-pagination>
       </div>
-    </div>
+
   </d2-container>
 
 </template>
 
 <script>
-import { getcluster,gettreedata} from '@api/vms'
+import { getcluster} from '@api/vms'
 import Vue from 'vue'
+import {createNamespacedHelpers} from 'vuex'
+const {mapState} = createNamespacedHelpers('d2admin')
 import pluginExport from '@d2-projects/vue-table-export'
 Vue.use(pluginExport)
 export default {
   name: 'cluster',
   created () {
     this.getClusterData();
-    this.getTreeData();
+    this.$store.dispatch('d2admin/fetTreeData')
     for (let i = 0; i < this.table.columns.length; i++) {
       this.colSelect.push(this.table.columns[i].label);
       this.colOptions.push(this.table.columns[i].label);
@@ -105,11 +107,15 @@ export default {
       });
     }
   },
+  computed:{
+    ...mapState({
+      treeData: state=>state.vm.treeData
+    })
+  },
   data () {
     return {
       colOptions: [],
       colSelect: [],
-      TreeData:[],
       table: {
         columns: [
           //{label: 'ID',prop: 'id',sort:"custom"},
@@ -128,42 +134,42 @@ export default {
             istrue: true
           },
           {
-            label: 'CPU总计',
+            label: 'CPU总计/Ghz',
             prop: 'cputotal',
             sort:false,
             width: 130,
             istrue: true
           },
           {
-            label: 'CPU使用量',
+            label: 'CPU使用量/Ghz',
             prop: 'cpuusage',
             sort:false,
             width: 130,
             istrue: true
           },
           {
-            label: '内存总计',
+            label: '内存总计/G',
             prop: 'memtotal',
             sort:false,
             width: 130,
             istrue: true
           },
           {
-            label: '内存使用量',
+            label: '内存使用量/G',
             prop: 'memusage',
             sort:false,
             width: 130,
             istrue: true
           },
           {
-            label: '存储总计',
+            label: '存储总计/T',
             prop: 'datatotal',
             sort:false,
             width: 130,
             istrue: true
           },
           {
-            label: '存储剩余量',
+            label: '存储剩余量/T',
             prop: 'datafree',
             sort:"custom",
             width: 130,
@@ -224,18 +230,10 @@ export default {
     //获取集群信息
     getClusterData () {
       getcluster(this.table.getParams).then(res => {
-        console.log(this.table.getParams)
         this.table.data = res.results;
         this.table.total = res.count;
-        console.log(this.table.data)
       }).catch(function (error) {
         console.log(error)
-      })
-    },
-    getTreeData() {
-      gettreedata().then(res=>{
-        console.log(res)
-        this.TreeData = res
       })
     },
     refreshClick(){
@@ -258,7 +256,6 @@ export default {
     },
     //对指定字段排序
     changeTableSort (column) {
-      console.log(column);
       //  获取字段名和排序类型
       var fieldName = column.prop;
       var sortingType = column.order;
@@ -275,11 +272,6 @@ export default {
         //this.table.data = this.table.data.sort((a, b) => a[fieldName] - b[fieldName]);
       }
     },
-    handleNodeClick(data){
-      console.log(data.label)
-      this.table.getParams.datacenter__name=data.label
-      this.getClusterData()
-    }
   }
 }
 </script>

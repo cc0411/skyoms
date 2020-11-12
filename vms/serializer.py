@@ -25,10 +25,13 @@ class DataStoresSerializer(serializers.ModelSerializer):
         read_only=True,
         slug_field='name'
     )
+    rate = serializers.SerializerMethodField()
     class Meta:
         model = DataStores
         fields = '__all__'
-
+    def get_rate(self,obj):
+        rate = '%.2f' %(float(obj.freespace)/float(obj.capacity)*100)
+        return rate
 class NetworkAdaptersSerializer(serializers.ModelSerializer):
     datacenter = serializers.SlugRelatedField(
         many=False,
@@ -55,9 +58,17 @@ class DedicatedhostsSerializer(serializers.ModelSerializer):
         read_only=True,
         slug_field='name'
     )
+    cpu_rate = serializers.SerializerMethodField()
+    memory_rate = serializers.SerializerMethodField()
     class Meta:
         model = Dedicatedhosts
         fields = '__all__'
+    def get_cpu_rate(self,obj):
+        rate = '%.2f%%' %(float(obj.cpuusage)/float(obj.cputotal)*100)
+        return rate
+    def get_memory_rate(self,obj):
+        rate = '%.2f%%' %(float(obj.memusage)/float(obj.memtotal)*100)
+        return rate
 class VirtualHostsSerializer(serializers.ModelSerializer):
     datacenter = serializers.SlugRelatedField(
         many=False,

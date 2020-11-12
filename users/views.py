@@ -17,9 +17,13 @@ from skyoms.expiring_token_authentication import ExpireTokenAuthentication
 from rest_framework import permissions
 from rest_framework.views import APIView
 from django.views import View
+from .models import LoginRecord
+from utils.BaseViews import BaseView
+from .serializers import LoginRecordSerializer
 import json
 import uuid
 import datetime
+
 # Create your views here.
 from django.contrib.auth import get_user_model
 User = get_user_model()
@@ -51,6 +55,7 @@ def user_login(request):
             }
         }
         try:
+            login_ip = request.META['REMOTE_ADDR']
             raw_data = json.loads(request.body.decode('utf-8'))
             username = raw_data.get('username')
             password = raw_data.get('password')
@@ -73,6 +78,7 @@ def user_login(request):
                 login(request, user)
                 # 保存最新token到数据库
                 token_obj = Token.objects.filter(user=user)
+
                 if token_obj:
                     token_obj.update(**{'key': rand_token, 'created': datetime.datetime.now()})
                 else:
@@ -80,7 +86,8 @@ def user_login(request):
                 # 获取登录用户有权限访问的菜单和路由
                 menu = get_user_menu(user)
                 router = get_user_router(user)
-
+                # 插入审计日志
+                LoginRecord.objects.create(user=request.user,ip=login_ip,login_time=datetime.datetime.now())
                 data = {
                     'username': username,
                     'name': username,
@@ -178,4 +185,7 @@ class ListUserRouter(APIView):
         finally:
             return JsonResponse(result)
 
+class LoginRecordViewSet(BaseView):
+    queryset = LoginRecord.objects.all().order_by("-login_time")
+    serializer_class = LoginRecordSerializer
 

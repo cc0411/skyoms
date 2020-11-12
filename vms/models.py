@@ -55,6 +55,7 @@ class DataStores(BaseModel):
     def __str__(self):
         return self.name
 
+
     class Meta:
         db_table = 'datastores'
         verbose_name = u'存储'

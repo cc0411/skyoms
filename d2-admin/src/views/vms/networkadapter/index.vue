@@ -87,7 +87,6 @@ name: 'networkadapter',
       getnetworkadapter(this.table.getParams).then(res=>{
         this.table.data = res.results;
         this.table.total = res.count;
-        console.log(this.table.data)
       }).catch(function (error){
         console.log(error)
       })

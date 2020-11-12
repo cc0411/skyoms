@@ -3,6 +3,7 @@
     <d2-page-cover>
       <d2-icon-svg class="logo" name="d2-admin"/>
     </d2-page-cover>
+
   </d2-container>
 </template>
 

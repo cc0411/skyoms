@@ -5,7 +5,7 @@
       <div class="filter">
         <el-select v-model="table.getParams.datacenter__name" filterable class="d2-mr-5" size="mini"  placeholder="请选择数据中心"  @change="getVirtualhostData">
           <el-option
-            v-for="item in TreeData"
+            v-for="item in treeData"
             :key="item.value"
             :label="item.label"
             :value="item.value"
@@ -78,15 +78,17 @@
 </template>
 
 <script>
-import { gettreedata, getvirtualhost } from '@api/vms'
+import { getvirtualhost } from '@api/vms'
 import Vue from 'vue'
 import pluginExport from '@d2-projects/vue-table-export'
+import {createNamespacedHelpers} from 'vuex'
+const {mapState} = createNamespacedHelpers('d2admin')
 Vue.use(pluginExport)
 export default {
   name: 'virtualhost',
   created () {
     this.getVirtualhostData();
-    this.getTreeData();
+    this.$store.dispatch('d2admin/fetTreeData')
     for (let i = 0; i < this.table.columns.length; i++) {
       this.colSelect.push(this.table.columns[i].label);
       this.colOptions.push(this.table.columns[i].label);
@@ -109,11 +111,15 @@ export default {
       });
     }
   },
+  computed:{
+    ...mapState({
+      treeData: state=>state.vm.treeData
+    })
+  },
   data() {
     return {
       colOptions: [],
       colSelect: [],
-      TreeData:[],
       table: {
         columns:[
           //{label:'ID',prop:'id',sort:"custom",},
@@ -123,11 +129,11 @@ export default {
           {label: 'IP',prop: 'ip',sort: false,width:130,istrue: true},
           {label:'电源状态',prop:'powerState',sort:false,width:110,istrue: true},
           {label:'CPU核数',prop:'cpunums',sort:false,width:110,istrue: true},
-          {label:'内存',prop:'memtotal',sort:'custom',width:110,istrue: true},
+          {label:'内存/G',prop:'memtotal',sort:'custom',width:110,istrue: true},
           {label:'系统',prop:'os',sort:false,width:300,istrue: true},
-          {label:'CPU用量',prop:'cpuusage',sort:false,width:130,istrue: true},
-          {label:'内存用量',prop:'memusage',sort:false,width:130,istrue: true},
-          {label:'存储用量',prop:'store_usage',sort:'custom',width:130,istrue: true},
+          {label:'CPU用量/Mhz',prop:'cpuusage',sort:false,width:130,istrue: true},
+          {label:'内存用量/M',prop:'memusage',sort:false,width:130,istrue: true},
+          {label:'存储用量/G',prop:'store_usage',sort:'custom',width:130,istrue: true},
           {label: '状态',prop: 'status',sort: false,width:120,istrue: true}
         ],
         data : [],
@@ -167,18 +173,10 @@ export default {
     //获取所以虚拟机信息
     getVirtualhostData() {
       getvirtualhost (this.table.getParams).then(res=>{
-        console.log(this.table.getParams)
         this.table.data = res.results;
         this.table.total = res.count;
-        console.log(this.table.data)
       }).catch(function (error){
         console.log(error)
-      })
-    },
-    getTreeData() {
-      gettreedata().then(res=>{
-        console.log(res)
-        this.TreeData = res
       })
     },
     refreshClick(){
@@ -201,7 +199,6 @@ export default {
     },
     //对指定字段排序
     changeTableSort (column) {
-      console.log(column);
       //  获取字段名和排序类型
       var fieldName = column.prop;
       var sortingType = column.order;

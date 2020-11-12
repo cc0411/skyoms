@@ -26,7 +26,8 @@
         :prop="item.prop"
         :label="item.label"
         :width="item.width"
-        v-if="item.istrue">
+        v-if="item.istrue"
+      align="center">
       </el-table-column>
     </el-table>
     <div class="d2-crud-footer">
@@ -52,7 +53,7 @@ Vue.use(pluginExport)
 import { getdatacenter } from '@api/vms'
 export default {
 name: 'datacenter',
-  created () {
+  mounted () {
     this.getDatacenterData();
     for (let i = 0; i < this.table.columns.length; i++) {
       this.colSelect.push(this.table.columns[i].label);
@@ -84,12 +85,12 @@ name: 'datacenter',
         columns:[
           //{label:'ID',prop:'id'},
           {label:'数据中心',prop:'name',width:'150',sort:false,istrue: true},
-          {label:'CPU总计',prop:'cputotal',width:'130',sort:false,istrue: true},
-          {label:'CPU使用量',prop:'cpuusage',width:'130',sort:false,istrue: true},
-          {label:'内存总计',prop:'memtotal',width:'130',sort:false,istrue: true},
-          {label:'内存使用量',prop:'memusage',width:'130',sort:false,istrue: true},
-          {label:'存储总计',prop:'datatotal',width:'130',sort:false,istrue: true},
-          {label:'存储剩余量',prop:'datafree',width:'130',sort:"custom",istrue: true},
+          {label:'CPU总计/Ghz',prop:'cputotal',width:'130',sort:false,istrue: true},
+          {label:'CPU使用量/Ghz',prop:'cpuusage',width:'130',sort:false,istrue: true},
+          {label:'内存总计/G',prop:'memtotal',width:'130',sort:false,istrue: true},
+          {label:'内存使用量/G',prop:'memusage',width:'130',sort:false,istrue: true},
+          {label:'存储总计/T',prop:'datatotal',width:'130',sort:false,istrue: true},
+          {label:'存储剩余量/T',prop:'datafree',width:'130',sort:"custom",istrue: true},
           {label:'宿主机数量',prop:'numhosts',width:'130',sort:"custom",istrue: true},
           {label:'虚拟机数量',prop:'vmscount',width:'130',sort:"custom",istrue: true},
           {label:'CPU总核数',prop:'numcpuscores',width:'110',sort:false,istrue: true},
@@ -125,7 +126,6 @@ name: 'datacenter',
       getdatacenter(this.table.getParams).then(res=>{
         this.table.data = res.results;
         this.table.total = res.count;
-        console.log(this.table.data)
       }).catch(function (error){
         console.log(error)
       })
@@ -140,7 +140,6 @@ name: 'datacenter',
     },
     //对指定字段排序
     changeTableSort (column) {
-      console.log(column);
       //  获取字段名和排序类型
       var fieldName = column.prop;
       var sortingType = column.order;
