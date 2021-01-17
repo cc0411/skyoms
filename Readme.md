@@ -205,3 +205,12 @@ python manage.py collectstatic
 ``` 
 
 # 上线后删除所有d2-admin配置中关于VUE_APP_API和 process.env.VUE_APP_BASE_API 相关内容，然后执行build
+
+
+# 监控cpu和内存
+```
+安装psutil
+设置客户端crontab定时任务
+* * * * * python /opt/client/cpu.py
+* * * * * python /opt/client/memory.py
+```

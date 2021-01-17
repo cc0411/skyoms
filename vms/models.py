@@ -16,7 +16,6 @@ class DataCenters(BaseModel):
     numcpuscores = models.SmallIntegerField(verbose_name=u'CPU总核数')
     vmscount = models.SmallIntegerField(verbose_name=u'虚拟机数量')
 
-
     def __str__(self):
         return self.name
 

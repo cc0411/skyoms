@@ -48,13 +48,13 @@
         >
         <template slot-scope="scope">
           <div v-if="(item.prop==='status')" slot="referehce" class="name-wapper" style="text-align: left">
-            <el-tag style="color: #000" :color="VIRTUAL_STATUS[scope.row[item.prop]].color">
-              {{VIRTUAL_STATUS[scope.row[item.prop]].type}}
+            <el-tag :type="VIRTUAL_STATUS[scope.row[item.prop]].type">
+              {{VIRTUAL_STATUS[scope.row[item.prop]].name}}
             </el-tag>
           </div>
           <div v-else-if="(item.prop==='powerState')" slot="referehce" class="name-wapper" style="text-align: left">
-            <el-tag style="color: #000" :color="POWER_STATE[scope.row[item.prop]].color">
-              {{POWER_STATE[scope.row[item.prop]].type}}
+            <el-tag  :type="POWER_STATE[scope.row[item.prop]].type">
+              {{POWER_STATE[scope.row[item.prop]].name}}
             </el-tag>
           </div>
           <span v-else>{{scope.row[item.prop]}}</span>
@@ -86,9 +86,9 @@ const {mapState} = createNamespacedHelpers('d2admin')
 Vue.use(pluginExport)
 export default {
   name: 'virtualhost',
-  created () {
+  mounted () {
     this.getVirtualhostData();
-    this.$store.dispatch('d2admin/fetTreeData')
+    this.$store.dispatch('d2admin/vm/fetTreeData')
     for (let i = 0; i < this.table.columns.length; i++) {
       this.colSelect.push(this.table.columns[i].label);
       this.colOptions.push(this.table.columns[i].label);
@@ -150,12 +150,12 @@ export default {
         total:0,
       },
       VIRTUAL_STATUS: {
-        'green' :{'color':'#67C23A','type':'正常'},
-        'yellow' :{'color':'#E6A23C','type':'异常'}
+        'green':{type:'success',name:'正常'},
+        'yellow':{type:'danger',name:'异常'}
       },
       POWER_STATE: {
-        'poweredOn':{'color':'#67C23A',type:'已开机'},
-        'poweredOff':{'color':'#E6A23C',type:"已关机"}
+        'poweredOn':{type:'success',name:'已开机'},
+        'poweredOff':{type:'danger',name:"已关机"}
       }
     }
   },
@@ -223,9 +223,9 @@ export default {
 .handle-head {
   padding-bottom: 5px;
 }
-.pagination {
-  float: right;
-  margin-top: 20px;
+.pagination ,.el-pagination{
+  text-align: center;
+  margin-top: 10px;
 }
 .search {
   float: left;

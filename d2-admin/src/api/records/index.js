@@ -7,3 +7,10 @@ export function  getloginrecord(params) {
     params
   })
 }
+export function  getcollectrecord(params) {
+  return request ({
+    url: process.env.VUE_APP_BASE_API + '/users/collectrecord/',
+    method: 'get',
+    params
+  })
+}

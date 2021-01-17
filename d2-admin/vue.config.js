@@ -13,7 +13,7 @@ process.env.VUE_APP_VERSION = require('./package.json').version
 process.env.VUE_APP_BUILD_TIME = require('dayjs')().format('YYYY-M-D HH:mm:ss')
 
 // 基础路径 注意发布之前要先修改这里
-// const publicPath = process.env.VUE_APP_PUBLIC_PATH || '/'
+//const publicPath = process.env.VUE_APP_PUBLIC_PATH || '/'
 const publicPath = process.env.VUE_APP_PUBLIC_PATH || '/static/'
 // 设置不参与构建的库
 const externals = {}
@@ -27,10 +27,6 @@ const cdn = {
 
 // 多页配置，默认未开启，如需要请参考 https://cli.vuejs.org/zh/config/#pages
 const pages = undefined
-// const pages = {
-//   index: './src/main.js',
-//   subpage: './src/subpage.js'
-// }
 
 module.exports = {
   // 根据你的实际情况更改这里
@@ -142,6 +138,7 @@ module.exports = {
       .exclude
       .add(resolve('src/assets/svg-icons/icons'))
       .end()
+
     // 重新设置 alias
     config.resolve.alias
       .set('@api', resolve('src/api'))

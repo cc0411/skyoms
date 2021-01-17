@@ -138,3 +138,18 @@ class LoginRecord(models.Model):
         db_table ='login_record'
         verbose_name_plural = '登陆日志'
         verbose_name = verbose_name_plural
+
+class CollectRecord(models.Model):
+    '''
+    Collect Record
+    '''
+    host = models.CharField(max_length=32,verbose_name='hos')
+    result = models.TextField(verbose_name='result',default='***success***')
+    collect_time = models.DateTimeField(verbose_name='collect_time')
+    type = models.CharField(verbose_name='type',max_length=34)
+    def __str__(self):
+        return self.host
+    class Meta:
+        db_table = 'collect_record'
+        verbose_name_plural = '采集日志'
+        verbose_name = verbose_name_plural

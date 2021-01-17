@@ -27,7 +27,7 @@ const actions = {
     }}
 }
 export default {
-  namespace :true,
+  namespaced: true,
   state,
   getters,
   actions,

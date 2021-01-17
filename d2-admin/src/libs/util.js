@@ -9,7 +9,7 @@ const util = {
   db,
   log,
   menu,
-  router
+  router,
 }
 
 /**

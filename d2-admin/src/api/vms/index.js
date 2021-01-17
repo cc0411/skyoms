@@ -55,6 +55,14 @@ export function  gethostresource(params) {
     params
   })
 }
+
+export function  getsystemresource(params) {
+  return request ({
+    url: process.env.VUE_APP_BASE_API + '/api/vms/getsystemdata/',
+    method: 'get',
+    params
+  })
+}
 export function  getdataresource(params) {
   return request ({
     url: process.env.VUE_APP_BASE_API + '/api/vms/getdataresource/',

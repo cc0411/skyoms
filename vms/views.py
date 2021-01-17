@@ -3,7 +3,7 @@ from django.http import HttpResponse
 from .serializer import DataCentersSerializer,DataStoresSerializer,ClustersSerializer,NetworkAdaptersSerializer,DedicatedhostsSerializer,VirtualHostsSerializer
 from .models import Dedicatedhosts,VirtualHosts,DataStores,DataCenters,Clusters,NetworkAdapters
 from utils.BaseViews import BaseView
-
+from django.db.models import  Count
 
 class DataCentersViewSet(BaseView):
     queryset = DataCenters.objects.all().order_by("-ctime")
@@ -94,25 +94,6 @@ class GetDedicatedhostResource(View):
         return HttpResponse(json.dumps(json_list),content_type='application/json')
 
 
-class GetDatastoreResource(View):
-    '''
-    获取存储使用率
-    '''
-    def get(self,request):
-        datacenter = request.GET.get('datacenter')
-        json_list =[]
-        if datacenter:
-            data = DataStores.objects.filter(datacenter__name=datacenter)
-        else:
-            data = DataStores.objects.all()
-        for d in data:
-            json_dict ={}
-            json_dict["存储名"] = d.name
-            json_dict["总空间"] = d.capacity
-            json_dict["剩余空间"] = d.freespace
-            json_dict["剩余率"] = "%.2f%%" %(d.freespace/d.capacity*100)
-            json_list.append(json_dict)
-        return HttpResponse(json.dumps(json_list), content_type='application/json')
 
 class GetDatacenterTreeData(View):
     '''
@@ -127,3 +108,23 @@ class GetDatacenterTreeData(View):
             json_dict["label"] = d.name
             json_list.append(json_dict)
         return  HttpResponse(json.dumps(json_list),content_type='application/json')
+
+
+class GetSystemData(View):
+    '''
+    获取系统分类数据
+
+    '''
+    def get(self,request):
+        json_list =[]
+        datacenter = request.GET.get('datacenter')
+        if datacenter:
+            vhosts = VirtualHosts.objects.values('os').annotate(count=Count('os')).filter(datacenter__name=datacenter)
+        else:
+            vhosts = VirtualHosts.objects.values('os').annotate(count=Count('os'))
+        for v  in vhosts:
+            json_dict = {}
+            json_dict["系统类型"] = v['os']
+            json_dict["数量"] = v['count']
+            json_list.append(json_dict)
+        return HttpResponse(json.dumps(json_list), content_type='application/json')

@@ -165,10 +165,11 @@ name: 'datacenter',
 .handle-head {
   padding-bottom: 5px;
 }
-.pagination {
-  float: right;
-  margin-top: 20px;
+.pagination ,.el-pagination{
+  text-align: center;
+  margin-top: 10px;
 }
+
 .search {
   float: left;
 }

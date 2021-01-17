@@ -56,6 +56,8 @@ export default {
             console.log(res)
             util.cookies.set('uuid', res.uuid)
             util.cookies.set('token', res.token)
+            store.commit('d2admin/userinfo/SET_TOKEN',
+              {token:res.token},{ root: true })
             // 设置侧边栏菜单
             // permMenu是后台返回的登录用户拥有权限访问的菜单
             // freeMenuAside是所有用户都有权限访问的菜单
@@ -109,6 +111,7 @@ export default {
         util.cookies.remove('uuid')
         // 清空 vuex 用户信息
         await dispatch('d2admin/user/set', {}, {root: true})
+        store.commit('d2admin/userinfo/SET_TOKEN', {token:''},{ root: true })
         // 跳转路由
         router.push({
           name: 'login'

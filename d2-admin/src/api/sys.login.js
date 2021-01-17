@@ -8,3 +8,10 @@ export function AccountLogin (data) {
     data,
   })
 }
+export function getInfo(token) {
+  return request({
+    url: process.env.VUE_APP_BASE_API + '/users/personinfo/',
+    method: 'get',
+    params: { token }
+  })
+}

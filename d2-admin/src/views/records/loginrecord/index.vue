@@ -2,7 +2,6 @@
   <d2-container type="card">
     <template slot="header">登陆日志</template>
     <el-table
-      ref="datacenterTable"
       :data="table.data"
       style="width: 100%"
       v-show="table.data.length>0"
@@ -72,11 +71,11 @@ methods: {
   },
   handleCurrentChange(page){
     this.table.getParams.page=page
-    this.getDatastoreData();
+    this.getLoginRecord();
   },
   handleSizeChange(size){
     this.table.getParams.page_size = size
-    this.getDatastoreData();
+    this.getLoginRecord();
   },
 }
 
@@ -84,4 +83,8 @@ methods: {
 </script>
 
 <style scoped>
+.pagination ,.el-pagination{
+  text-align: center;
+  margin-top: 10px;
+}
 </style>

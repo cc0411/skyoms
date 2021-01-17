@@ -2,6 +2,15 @@
 import Vue from 'vue'
 import i18n from './i18n'
 import App from './App'
+
+import { BootstrapVue, IconsPlugin } from 'bootstrap-vue'
+
+// Install BootstrapVue
+Vue.use(BootstrapVue)
+// Optionally install the BootstrapVue icon components plugin
+Vue.use(IconsPlugin)
+import 'bootstrap/dist/css/bootstrap.css'
+import 'bootstrap-vue/dist/bootstrap-vue.css'
 // 核心插件
 import d2Admin from '@/plugin/d2admin'
 // store
@@ -12,6 +21,9 @@ Vue.use(ElementUI)
 // v-charts
 import VCharts from 'v-charts'
 Vue.use(VCharts)
+//h-charts
+import HighchartsVue from 'highcharts-vue'
+Vue.use(HighchartsVue)
 
 // 菜单和路由设置
 import router from './router'

@@ -71,7 +71,7 @@ import pluginExport from '@d2-projects/vue-table-export'
 Vue.use(pluginExport)
 export default {
 name: 'datastore',
-  created () {
+  mounted () {
     this.getDatastoreData();
     this.$store.dispatch('d2admin/fetTreeData')
   },
@@ -89,7 +89,7 @@ name: 'datastore',
           {label: '数据中心',prop: 'datacenter',sort: false},
           {label:'存储总计/T',prop:'capacity',sort: false},
           {label:'存储剩余量/T',prop:'freespace',sort: 'custom'},
-          {label: '剩余率',prop:'rate',sort: false,width:'300'}
+          {label: '剩余率/%',prop:'rate',sort: false,width:'300'}
 
         ],
         data : [],
@@ -194,9 +194,9 @@ name: 'datastore',
 .handle-head {
   padding-bottom: 5px;
 }
-.pagination {
-  float: right;
-  margin-top: 20px;
+.pagination ,.el-pagination{
+  text-align: center;
+  margin-top: 10px;
 }
 .search {
   float: left;

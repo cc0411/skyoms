@@ -49,8 +49,8 @@
         show-overflow-tooltip>
         <template slot-scope="scope">
           <div v-if="(item.prop==='overallstatus')" slot="referehce" class="name-wapper" style="text-align: left">
-            <el-tag style="color: #000" :color="CLUSTER_STATUS[scope.row[item.prop]].color">
-              {{CLUSTER_STATUS[scope.row[item.prop]].type}}
+            <el-tag :type="CLUSTER_STATUS[scope.row[item.prop]].type">
+              {{CLUSTER_STATUS[scope.row[item.prop]].name}}
             </el-tag>
           </div>
           <span v-else>{{scope.row[item.prop]}}</span>
@@ -82,9 +82,9 @@ import pluginExport from '@d2-projects/vue-table-export'
 Vue.use(pluginExport)
 export default {
   name: 'cluster',
-  created () {
+  mounted () {
     this.getClusterData();
-    this.$store.dispatch('d2admin/fetTreeData')
+    this.$store.dispatch('d2admin/vm/fetTreeData')
     for (let i = 0; i < this.table.columns.length; i++) {
       this.colSelect.push(this.table.columns[i].label);
       this.colOptions.push(this.table.columns[i].label);
@@ -211,8 +211,8 @@ export default {
         total:0,
       },
       CLUSTER_STATUS: {
-        'green' :{'color':'#67C23A','type':'正常'},
-        'yellow' :{'color':'#E6A23C','type':'异常'}
+        'green':{type:'success',name:'正常'},
+        'yellow':{type:'danger',name:'异常'}
       }
     }
   },
@@ -289,10 +289,11 @@ export default {
 .handle-head {
   padding-bottom: 5px;
 }
-.pagination {
-  float: right;
-  margin-top: 20px;
+.pagination ,.el-pagination{
+  text-align: center;
+  margin-top: 10px;
 }
+
 .search {
   float: left;
 }

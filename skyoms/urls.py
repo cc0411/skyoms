@@ -19,7 +19,7 @@ from django.views.static import serve
 from .settings import MEDIA_ROOT
 from rest_framework.documentation import include_docs_urls
 from django.views.generic.base import TemplateView
-
+from django.views.generic.base import RedirectView
 
 
 urlpatterns = [
@@ -31,6 +31,7 @@ urlpatterns = [
     path('users/', include('users.urls')),
     path('api/vms/',include('vms.urls')),
     path('api/assets/',include('assets.urls')),
+    re_path('^favicon.ico$',RedirectView.as_view(url=r'static/favicon.ico')),
     #文件
     path('media/<path:path>',serve,{'document_root':MEDIA_ROOT}),
     re_path('', TemplateView.as_view(template_name='index.html')),

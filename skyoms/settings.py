@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'vms.apps.VmsConfig',
     'assets.apps.AssetsConfig',
     'django_celery_beat',
+    'channels',
 ]
 
 AUTH_USER_MODEL ='users.Userprofile'
@@ -72,7 +73,6 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
-
 REST_FRAMEWORK = {
     'DATETIME_FORMAT': '%Y年%m月%d日 %H:%M',
     'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.coreapi.AutoSchema',
@@ -128,6 +128,19 @@ DATABASES = {
     }
 }
 
+# websocket
+#REDIS_URL = 'redis://:Redis@123@127.0.0.1:6379/0'
+ASGI_APPLICATION = 'skyoms.routing.application'
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            "hosts":['redis://:Redis@123@127.0.0.1:6379/0'],
+            "symmetric_encryption_keys":[SECRET_KEY],
+        }
+    }
+}
+
 
 # Password validation
 # https://docs.djangoproject.com/en/3.1/ref/settings/#auth-password-validators
@@ -168,11 +181,13 @@ USE_TZ = False
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, "static")
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'd2-admin/dist'),
-    #os.path.join(BASE_DIR, "static")
+    BASE_DIR / "static",
+    BASE_DIR / "d2-admin/dist"
+
 ]
 
-# CORS_ORIGIN_ALLOW_ALL = True
+CORS_ORIGIN_ALLOW_ALL = True
+CORS_ALLOW_CREDENTIALS =True
 CORS_ORIGIN_WHITELIST = (
     "http://localhost:8080",
     "http://127.0.0.1:8080",
@@ -225,6 +240,11 @@ MEDIA_URL="/media/"
 MEDIA_ROOT=os.path.join(BASE_DIR,"media")
 
 
+SCRIPT_DIR = 'script'   # 存放脚本
+SCRIPT_ROOT = os.path.join(MEDIA_ROOT, SCRIPT_DIR)
+if not os.path.isdir(SCRIPT_ROOT):
+    os.makedirs(SCRIPT_ROOT)
+
 # 配置celery
 
 # 关闭 UTC
@@ -240,4 +260,5 @@ CELERY_RESULT_SERIALIZER = 'json'
 
 CELERY_RESULT_BACKEND = 'redis://:Redis@123@127.0.0.1:6379/3'
 
-
+CRYPTOGRAPHY_TOKEN = 'ZmDfcTF7_60GrrY167zsiPd67pEvs0aGOv2oasOM1Pg='
+ANSIBLE_CONNECTION_TYPE = 'paramiko'
