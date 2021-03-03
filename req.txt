@@ -1,5 +1,9 @@
 aioredis==1.3.1
+<<<<<<< HEAD
 amqp==5.0.1
+=======
+amqp==2.6.1
+>>>>>>> 720feee0968328ce70899ccee82914d7af738edd
 ansible==2.9.14
 asgiref==3.2.10
 async-timeout==3.0.1
@@ -9,7 +13,11 @@ Automat==20.2.0
 bcrypt==3.2.0
 billiard==3.6.3.0
 captcha==0.3
+<<<<<<< HEAD
 celery==5.0.4
+=======
+celery==4.4.7
+>>>>>>> 720feee0968328ce70899ccee82914d7af738edd
 certifi==2020.6.20
 cffi==1.14.3
 channels==3.0.2
@@ -38,14 +46,23 @@ django-timezone-field==4.0
 djangorestframework==3.12.1
 docopt==0.6.2
 et-xmlfile==1.0.1
+<<<<<<< HEAD
 hiredis==1.1.0
+=======
+flower==0.9.7
+h2==3.2.0
+hiredis==1.1.0
+hpack==3.0.0
+humanize==3.2.0
+hyperframe==5.2.0
+>>>>>>> 720feee0968328ce70899ccee82914d7af738edd
 hyperlink==20.0.1
 idna==2.10
 incremental==17.5.0
 itypes==1.2.0
 jdcal==1.4.1
 Jinja2==2.11.2
-kombu==5.0.2
+kombu==4.6.11
 lxml==4.6.1
 MarkupPy==1.14
 MarkupSafe==1.1.1
@@ -55,6 +72,8 @@ odfpy==1.4.1
 openpyxl==3.0.5
 paramiko==2.7.2
 Pillow==7.2.0
+priority==1.3.0
+prometheus-client==0.8.0
 prompt-toolkit==3.0.8
 psutil==5.7.3
 pyasn1==0.4.8
@@ -76,13 +95,23 @@ requests==2.24.0
 service-identity==18.1.0
 six==1.15.0
 sqlparse==0.4.1
+supervisor==4.2.1
 tablib==2.0.0
+<<<<<<< HEAD
 Twisted==20.3.0
+=======
+tornado==6.1
+Twisted==21.2.0rc1
+>>>>>>> 720feee0968328ce70899ccee82914d7af738edd
 txaio==20.4.1
 uritemplate==3.0.1
 urllib3==1.25.10
 uWSGI==2.0.19.1
-vine==5.0.0
+vine==1.3.0
 wcwidth==0.2.5
 xlrd==1.2.0
 zope.interface==5.2.0
+<<<<<<< HEAD
+=======
+
+>>>>>>> 720feee0968328ce70899ccee82914d7af738edd
