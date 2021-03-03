@@ -45,7 +45,7 @@ export function updateUserGroup(id, data) {
   })
 }
 
-// 更新用户的属组
+// 更新用户的密码
 export function changeUserPass(id, data) {
   return request({
     url: process.env.VUE_APP_BASE_API +'/users/chuserpasswd/' + id + '/',

@@ -123,11 +123,19 @@ export function adduserbindhost(params){
   })
 }
 
-export function updateuserbindhost(id,params){
+export function updateuserbindhost(params){
   return request({
-    url: process.env.VUE_APP_BASE_API + '/api/assets/userbindhost/' + id + '/',
+    url: process.env.VUE_APP_BASE_API + '/api/assets/userbindhost/' + params.id + '/',
     method: 'patch',
     data: params
+  })
+}
+// 更新绑定主机的属组
+export function updatehost2group(id, data) {
+  return request({
+    url: process.env.VUE_APP_BASE_API +'/api/assets/host2group/' + id + '/',
+    method: 'patch',
+    data
   })
 }
 export function deleteuserbindhost(id){

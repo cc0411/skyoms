@@ -55,6 +55,10 @@ class RemoteUserSerializer(serializers.ModelSerializer):
 
 class RemoteUserBindHostSerializer(serializers.ModelSerializer):
     remote_user = serializers.SlugRelatedField(queryset=RemoteUser.objects.all(),slug_field='name')
+    ctime = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S", label="创建时间", help_text="创建时间", required=False,
+                                            read_only=True)
+    utime = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S", label="更新时间", help_text="更新时间", required=False,
+                                            read_only=True)
     class Meta:
         model = RemoteUserBindHost
         fields = '__all__'

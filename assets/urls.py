@@ -1,6 +1,6 @@
 # -*- coding:utf-8 -*-
 from rest_framework.routers import DefaultRouter
-from assets.views import HostGroupViewSet,HostViewSet,RemoteUserBindHostViewSet,RemoteUserViewSet
+from assets.views import HostGroupViewSet,HostViewSet,RemoteUserBindHostViewSet,RemoteUserViewSet,Host2GroupViewset
 from django.urls import re_path
 from .monitor import cpu,memory
 from django.views.decorators.csrf import csrf_exempt
@@ -13,7 +13,7 @@ router.register(r'host',HostViewSet,basename="host")
 router.register(r'remoteuser',RemoteUserViewSet,basename="remoteuser")
 router.register(r'userbindhost',RemoteUserBindHostViewSet,basename="userbindhost")
 router.register(r'hostgroup',HostGroupViewSet,basename="hostgroup")
-
+router.register("host2group", Host2GroupViewset, basename="host2group")
 urlpatterns = [
     re_path('^update_hostinfo/$',update_hostinfo.as_view(),name='update_hostinfo'),
     re_path('^gethostgroup/$',GetHostGroup.as_view(),name='gethostgroup'),

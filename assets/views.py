@@ -1,6 +1,8 @@
 from .models import HostGroup,Hosts,RemoteUserBindHost,RemoteUser
 from .serializer import HostGroupSerializer,HostSerializer,RemoteUserBindHostSerializer,RemoteUserSerializer
 from utils.BaseViews import BaseView
+from rest_framework import viewsets, mixins, status
+from rest_framework.response import Response
 # Create your views here.
 from django.http import JsonResponse,HttpResponse
 from .tasks import Update_host_info
@@ -38,26 +40,34 @@ class RemoteUserBindHostViewSet(BaseView):
     search_fields = ('hostname','ip')
     filter_fields = ('enabled','env')
 
+class Host2GroupViewset(viewsets.GenericViewSet,
+                       mixins.UpdateModelMixin):
+    """
+    update:
+        更新绑定主机的主机组信息
+    """
+
+    queryset = RemoteUserBindHost.objects.all().order_by('id')
+    serializer_class = RemoteUserBindHostSerializer
+
+    def update(self, request, *args, **kwargs):
+        obj = self.get_object()
+        obj.host_group.set(request.data)
+
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
 class GetHostGroup(APIView):
     def get(self,request):
-        json_list = []
-        data = HostGroup.objects.all()
-        data1= RemoteUserBindHost.objects.all()
-        json_dict1 = {}
-        json_dict1['value'] = 0
-        json_dict1['label'] = '所有主机'
-        json_list.append(json_dict1)
-        json_dict2 = {}
-        json_dict2['value'] = -1
-        json_dict2['label'] = '自定义'
-        json_list.append(json_dict2)
-        for d in data:
+        json_list = [
+            {'value':0,'label':'所有主机'},
+            {'value':-1,'label':'自定义'}
+        ]
+        groups = HostGroup.objects.all()
+        for g in groups:
             json_dict = {}
-            json_dict["value"] = d.id
-            json_dict["label"] = d.name
+            json_dict["value"] = g.id
+            json_dict["label"] = g.name
             json_list.append(json_dict)
-
-
         return HttpResponse(json.dumps(json_list),content_type='application/json')
 
 
