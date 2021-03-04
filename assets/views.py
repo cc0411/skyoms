@@ -56,6 +56,21 @@ class Host2GroupViewset(viewsets.GenericViewSet,
 
         return Response(status=status.HTTP_204_NO_CONTENT)
 
+class HostGroupMemberViewset(viewsets.GenericViewSet,
+                         mixins.DestroyModelMixin):
+    """
+    destory:
+        删除主机组中的成员信息
+    """
+    queryset = HostGroup.objects.all().order_by('id')
+    serializer_class = HostGroupSerializer
+
+    def destroy(self, request, *args, **kwargs):
+        group_obj = self.get_object()
+        host_obj = RemoteUserBindHost.objects.get(id=request.data['id'])
+        host_obj.host_group.remove(group_obj.id)
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
 class GetHostGroup(APIView):
     def get(self,request):
         json_list = [

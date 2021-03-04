@@ -57,9 +57,9 @@ export function addhostgroup(params){
   })
 }
 
-export function updatehostgroup(id,params){
+export function updatehostgroup(params){
   return request({
-    url: process.env.VUE_APP_BASE_API + '/api/assets/hostgroup/' + id + '/',
+    url: process.env.VUE_APP_BASE_API + '/api/assets/hostgroup/' + params.id + '/',
     method: 'patch',
     data: params
   })
@@ -136,6 +136,14 @@ export function updatehost2group(id, data) {
     url: process.env.VUE_APP_BASE_API +'/api/assets/host2group/' + id + '/',
     method: 'patch',
     data
+  })
+}
+// 删除主机组的成员
+export function deleteHostGroupMember(id, params) {
+  return request({
+    url: process.env.VUE_APP_BASE_API +'/api/assets/hostgroupmember/' + id + '/',
+    method: 'delete',
+    data: params
   })
 }
 export function deleteuserbindhost(id){

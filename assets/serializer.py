@@ -5,7 +5,30 @@ from utils.crypto import encrypt
 class HostGroupSerializer(serializers.ModelSerializer):
     class Meta:
         model = HostGroup
-        fields = '__all__'
+        fields = ("id","name",'desc')
+    def to_representation(self, instance):
+        """
+            序列化
+            """
+        ret = super(HostGroupSerializer, self).to_representation(instance)
+        host_queryset = instance.remoteuserbindhost_set.all()
+        host_list = []
+        for host_obj in host_queryset:
+            host_list.append({
+                "id": host_obj.id,
+                "hostname": host_obj.hostname,
+                "type": host_obj.type,
+                "ip": host_obj.ip,
+                "protocol": host_obj.protocol,
+                "env": host_obj.env,
+                "port": host_obj.port,
+                "release": host_obj.release,
+                "security": host_obj.security,
+                #"remote_user": host_obj.remote_user,
+                "enabled": host_obj.enabled
+            })
+        ret['hosts'] = host_list
+        return ret
 
 class HostSerializer(serializers.ModelSerializer):
     server = serializers.SlugRelatedField(queryset=RemoteUserBindHost.objects.all(),
@@ -55,13 +78,13 @@ class RemoteUserSerializer(serializers.ModelSerializer):
 
 class RemoteUserBindHostSerializer(serializers.ModelSerializer):
     remote_user = serializers.SlugRelatedField(queryset=RemoteUser.objects.all(),slug_field='name')
-    ctime = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S", label="创建时间", help_text="创建时间", required=False,
-                                            read_only=True)
-    utime = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S", label="更新时间", help_text="更新时间", required=False,
-                                            read_only=True)
+    #ctime = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S", label="创建时间", help_text="创建时间", required=False,
+    #                                        read_only=True)
+    #utime = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S", label="更新时间", help_text="更新时间", required=False,
+    #                                        read_only=True)
     class Meta:
         model = RemoteUserBindHost
-        fields = '__all__'
+        fields = ('id','hostname','ip','type','protocol','env','port','release','platform','security','remote_user','enabled')
     def to_representation(self, instance):
         ret = super(RemoteUserBindHostSerializer, self).to_representation(instance)
         group_queryset = instance.host_group.all()

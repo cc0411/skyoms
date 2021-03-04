@@ -8,7 +8,7 @@
         </div>
         </el-col>
       </el-row>
-      <host-list :values="host" :loading="loading" @edit="handleUpdate"  @delete="handleDelete"></host-list>
+      <host-list :values="host" :loading="loading" @edit="handleUpdate" @update="handleUpdateHost" @editGroup="handleUpdateGroup" @delete="handleDelete"></host-list>
     </div>
     <el-dialog
         :visible.sync="dialogVisibleCreate"
@@ -21,6 +21,12 @@
         title="修改"
         width="50%">
       <host-form :form="detailForm"  @submit="handleSubmitUpdate" @cancel="handleUpdateCancel"></host-form>
+    </el-dialog>
+    <el-dialog
+      :visible.sync="dialogVisibleGroup"
+      title="更改用户组"
+      width="50%">
+      <update-hgroup :form="detailForm" :glist.sync="groupList" :goption="groupOption" @submit="handleSubmitUpdateHostGroup" @cancel="handleGroupCancel"></update-hgroup>
     </el-dialog>
     <div class="d2-crud-pagination">
       <el-pagination
@@ -37,20 +43,24 @@
 </template>
 
 <script>
-import { adduserbindhost,getuserbindhost, deleteuserbindhost,updateuserbindhost} from '@api/assets'
+import  { updatehost2group,gethostgroup,update_hostinfo,adduserbindhost,getuserbindhost, deleteuserbindhost,updateuserbindhost} from '@api/assets'
 import HostForm from './host-form'
 import HostList from './host-list'
+import UpdateHgroup from './update-hostgroup'
 
 export default {
 name: "userbindhost",
-components:{HostForm,HostList} ,
+components:{HostForm,HostList,UpdateHgroup} ,
 mounted(){
     this.getUserBindHostData();
   },
 data(){
   return {
+    groupList: [],
+    groupOption: [],
     dialogVisibleCreate: false,
     dialogVisibleUpdate: false,
+    dialogVisibleGroup: false,
     host:[],
     detailForm: {
     },
@@ -65,7 +75,6 @@ data(){
 methods:{
   getUserBindHostData(){
     getuserbindhost(this.getParams).then(res=>{
-      console.log(res)
       this.host = res.results;
       this.total = res.count
       this.loading = false
@@ -85,11 +94,50 @@ methods:{
     this.getParams.page_size = size
     this.getUserBindHostData()
   },
+  handleUpdateGroup(value){
+    this.groupList = []
+    this.detailForm = value
+    this.dialogVisibleGroup = true
+    gethostgroup().then(
+      // 获取所有用户组列表
+      res => {
+        this.groupOption = res.results
+      }
+    )
+    this.groupList = value.host_group.map(item => item.id)
+  },
+  handleSubmitUpdateHostGroup(id, value) {
+    // 更新用户属组事件
+    updatehost2group(id, value).then(
+      () => {
+        this.dialogVisibleGroup = false
+        this.getUserBindHostData()
+        this.$message({
+          type: 'success',
+          message: '更新成功'
+        })
+      },
+      error => {
+        this.$message({
+          type: 'error',
+          message: error.response.data.detail
+        })
+      }
+    )
+  },
   handleUpdate(value) {
     // 更新用户弹框显示
     this.dialogVisibleUpdate = true
         this.detailForm = value
 
+  },
+  handleUpdateHost(id){
+    update_hostinfo(id).then((res)=>{
+      this.$message({
+        message:'恭喜你，更新主机信息成功',
+        type:'success'
+      })
+    })
   },
   handleDelete(id) {
     deleteuserbindhost(id).then(
@@ -152,6 +200,11 @@ methods:{
   handleCreateCancel() {
     // 创建取消按钮
     this.dialogVisibleCreate = false
+    this.getUserBindHostData()
+  },
+  handleGroupCancel() {
+    // 更新属组取消按钮
+    this.dialogVisibleGroup = false
     this.getUserBindHostData()
   },
   handleUpdateCancel() {

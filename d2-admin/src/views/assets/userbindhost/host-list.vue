@@ -121,6 +121,7 @@
       <template slot-scope="scope">
         <el-button  size="mini" @click="handleUpdate(scope.row)" >更新</el-button>
         <el-button  size="mini" @click="handleEdit(scope.row)" >编辑</el-button>
+        <el-button size="mini" type="info" @click="handlehostGroups(scope.row)">属组</el-button>
         <el-button type="danger" size="mini" @click="handleDelete(scope.row)">删除</el-button>
       </template>
 
@@ -130,8 +131,6 @@
 </template>
 
 <script>
-import update_hostinfo from "@api/assets";
-
 export default {
 name: "HostList",
 props:{
@@ -177,14 +176,12 @@ methods:{
     console.log(this.multipleSelection)
   },
   handleUpdate(row){
-    update_hostinfo({id:row.id}).then((res)=>{
-      this.$message({
-        message:'恭喜你，更新主机信息成功',
-        type:'success'
-      })
-    })
-
+    this.$emit('update', row)
   },
+  handlehostGroups(row){
+    this.$emit('editGroup', row)
+  },
+
   handleDelete(row){
     this.$confirm(`此操作将删除该${row.ip}主机绑定记录, 是否继续?`, '删除主机绑定', {
       confirmButtonText: '确定',
