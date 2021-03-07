@@ -6,12 +6,18 @@ from utils.BaseViews import BaseView
 from django.db.models import  Count
 
 class DataCentersViewSet(BaseView):
+    '''
+    数据中心
+    '''
     queryset = DataCenters.objects.all().order_by("-ctime")
     serializer_class = DataCentersSerializer
     search_fields = ('name',)
     ordering_fields = ("ctime","numhosts","vmscount","datafree")
 
 class ClustersViewSet(BaseView):
+    '''
+    集群
+    '''
     queryset = Clusters.objects.all().order_by("-ctime")
     serializer_class = ClustersSerializer
     filter_fields = ['datacenter__name','overallstatus']
@@ -20,6 +26,9 @@ class ClustersViewSet(BaseView):
 
 
 class DataStoresViewSet(BaseView):
+    '''
+    存储
+    '''
     queryset = DataStores.objects.all().order_by("-ctime")
     serializer_class = DataStoresSerializer
     filter_fields = ['datacenter__name',]
@@ -28,6 +37,9 @@ class DataStoresViewSet(BaseView):
 
 
 class NetworkAdaptersViewSet(BaseView):
+    '''
+    网络
+    '''
     queryset = NetworkAdapters.objects.all().order_by("-ctime")
     serializer_class = NetworkAdaptersSerializer
     filter_fields = ['datacenter__name',]
@@ -37,6 +49,9 @@ class NetworkAdaptersViewSet(BaseView):
 
 
 class DedicatedhostsViewSet(BaseView):
+    '''
+    宿主机
+    '''
     queryset = Dedicatedhosts.objects.all().order_by("-ctime")
     serializer_class = DedicatedhostsSerializer
     filter_fields = ['cluster__name','datacenter__name','powerState','conState','status']
@@ -45,6 +60,9 @@ class DedicatedhostsViewSet(BaseView):
 
 
 class VirtualHostsViewSet(BaseView):
+    '''
+    虚拟机
+    '''
     queryset = VirtualHosts.objects.all().order_by("-ctime")
     serializer_class = VirtualHostsSerializer
     filter_fields = ['datacenter__name','host__name','powerState','conState','status']

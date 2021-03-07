@@ -1,5 +1,6 @@
 import request from '@/plugin/axios'
 
+//获取主机信息
 export function  gethost(params) {
   return request ({
     url: process.env.VUE_APP_BASE_API + '/api/assets/host/',
@@ -7,19 +8,21 @@ export function  gethost(params) {
     params
   })
 }
+//获取主机详细信息
 export function  gethostinfo(params) {
   return request ({
     url: process.env.VUE_APP_BASE_API + '/api/assets/host/'+params+'/',
     method: 'get',
   })
 }
+//获取CPU监控图
 export function  getcpuinfo(params) {
   return request ({
     url: process.env.VUE_APP_BASE_API + '/api/assets/cpu/chart_json/'+params+'/',
     method: 'get',
   })
 }
-
+//获取内存监控图
 export function  getmemoryinfo(params) {
   return request ({
     url: process.env.VUE_APP_BASE_API + '/api/assets/memory/chart_json/'+params+'/',
@@ -27,6 +30,7 @@ export function  getmemoryinfo(params) {
   })
 }
 
+//获取主机绑定用户信息
 export function  getuserbindhost(params) {
   return request ({
     url: process.env.VUE_APP_BASE_API + '/api/assets/userbindhost/',
@@ -34,6 +38,7 @@ export function  getuserbindhost(params) {
     params
   })
 }
+//获取远程用户
 export function  getremoteuser(params) {
   return request ({
     url: process.env.VUE_APP_BASE_API + '/api/assets/remoteuser/',
@@ -41,6 +46,8 @@ export function  getremoteuser(params) {
     params
   })
 }
+
+//获取主机组信息
 export function  gethostgroup(params) {
   return request ({
     url: process.env.VUE_APP_BASE_API + '/api/assets/hostgroup/',
@@ -49,6 +56,7 @@ export function  gethostgroup(params) {
   })
 }
 
+//添加主机组
 export function addhostgroup(params){
   return request({
     url: process.env.VUE_APP_BASE_API + '/api/assets/hostgroup/',
@@ -56,7 +64,7 @@ export function addhostgroup(params){
     data: params
   })
 }
-
+//更新主机组
 export function updatehostgroup(params){
   return request({
     url: process.env.VUE_APP_BASE_API + '/api/assets/hostgroup/' + params.id + '/',
@@ -64,6 +72,7 @@ export function updatehostgroup(params){
     data: params
   })
 }
+//删除主机组
 export function deletehostgroup(id){
   return request({
     url: process.env.VUE_APP_BASE_API + '/api/assets/hostgroup/' + id + '/',
@@ -71,6 +80,7 @@ export function deletehostgroup(id){
   })
 }
 
+//添加远程用户
 export function addremoteuser(params){
   return request({
     url: process.env.VUE_APP_BASE_API + '/api/assets/remoteuser/',
@@ -79,6 +89,7 @@ export function addremoteuser(params){
   })
 }
 
+//更新远程用户
 export function updateremoteuser(id,params){
   return request({
     url: process.env.VUE_APP_BASE_API + '/api/assets/remoteuser/' + id + '/',
@@ -86,6 +97,7 @@ export function updateremoteuser(id,params){
     data: params
   })
 }
+//删除远程用户
 export function deleteremoteuser(id){
   return request({
     url: process.env.VUE_APP_BASE_API + '/api/assets/remoteuser/' + id + '/',
@@ -93,6 +105,7 @@ export function deleteremoteuser(id){
   })
 }
 
+//添加主机
 export function addhost(params){
   return request({
     url: process.env.VUE_APP_BASE_API + '/api/assets/host/',
@@ -101,6 +114,7 @@ export function addhost(params){
   })
 }
 
+//更新主机
 export function updatehost(id,params){
   return request({
     url: process.env.VUE_APP_BASE_API + '/api/assets/host/' + id + '/',
@@ -108,6 +122,7 @@ export function updatehost(id,params){
     data: params
   })
 }
+//删除主机
 export function deletehost(id){
   return request({
     url: process.env.VUE_APP_BASE_API + '/api/assets/host/' + id + '/',
@@ -115,6 +130,7 @@ export function deletehost(id){
   })
 }
 
+//添加主机绑定
 export function adduserbindhost(params){
   return request({
     url: process.env.VUE_APP_BASE_API + '/api/assets/userbindhost/',
@@ -123,6 +139,7 @@ export function adduserbindhost(params){
   })
 }
 
+//更新主机绑定
 export function updateuserbindhost(params){
   return request({
     url: process.env.VUE_APP_BASE_API + '/api/assets/userbindhost/' + params.id + '/',
@@ -146,6 +163,8 @@ export function deleteHostGroupMember(id, params) {
     data: params
   })
 }
+
+//删除主机绑定信息
 export function deleteuserbindhost(id){
   return request({
     url: process.env.VUE_APP_BASE_API + '/api/assets/userbindhost/' + id + '/',
@@ -153,6 +172,8 @@ export function deleteuserbindhost(id){
   })
 }
 
+
+//Ansible更新主机硬件信息
 export  function update_hostinfo(params){
   return request({
     url: process.env.VUE_APP_BASE_API + '/api/assets/update_hostinfo/',

@@ -12,6 +12,9 @@ import json
 
 
 class HostGroupViewSet(BaseView):
+    '''
+    主机组
+    '''
     queryset = HostGroup.objects.all().order_by("-ctime")
     serializer_class = HostGroupSerializer
     filter_fields = ['name',]
@@ -19,6 +22,9 @@ class HostGroupViewSet(BaseView):
     ordering_fields = ('ctime','name')
 
 class HostViewSet(BaseView):
+    '''
+    主机详细信息
+    '''
     queryset = Hosts.objects.all().order_by("-ctime")
     serializer_class = HostSerializer
     filter_fields = ['cpu_info','os',]
@@ -26,6 +32,9 @@ class HostViewSet(BaseView):
     ordering_fields = ('ctime','memory','cpuload','memorylimit','disk')
 
 class RemoteUserViewSet(BaseView):
+    '''
+    主机远程账户
+    '''
     queryset = RemoteUser.objects.all().order_by("-ctime")
     serializer_class = RemoteUserSerializer
     ordering_fields = ('ctime',)
@@ -34,6 +43,9 @@ class RemoteUserViewSet(BaseView):
 
 
 class RemoteUserBindHostViewSet(BaseView):
+    '''
+    主机绑定用户
+    '''
     queryset = RemoteUserBindHost.objects.all().order_by("-ctime")
     serializer_class = RemoteUserBindHostSerializer
     ordering_fields = ('ctime',)
@@ -72,6 +84,9 @@ class HostGroupMemberViewset(viewsets.GenericViewSet,
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 class GetHostGroup(APIView):
+    '''
+    自定义主机组分类
+    '''
     def get(self,request):
         json_list = [
             {'value':0,'label':'所有主机'},
@@ -87,6 +102,9 @@ class GetHostGroup(APIView):
 
 
 class update_hostinfo(APIView):
+    '''
+    Ansible 更新主机硬件信息
+    '''
 
     authentication_classes = (ExpireTokenAuthentication,)
     def post(self,request):
