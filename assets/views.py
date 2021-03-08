@@ -100,7 +100,29 @@ class GetHostGroup(APIView):
             json_list.append(json_dict)
         return HttpResponse(json.dumps(json_list),content_type='application/json')
 
-
+class GetGroup2Hosts(APIView):
+    def get(self,request):
+        json_list = []
+        groups = request.GET.get('hostgroup')
+        print(groups)
+        if groups == 0  or groups == -1:
+            host = RemoteUserBindHost.objects.all()
+            for h in  host:
+                json_dict = {
+                    "value": h.id,
+                    "label": h.ip
+                }
+                json_list.append(json_dict)
+        else:
+            host = RemoteUserBindHost.objects.filter(host_group__id=groups)
+            for h in  host:
+                json_dict = {
+                    "value": h.id,
+                    "label": h.ip
+                }
+                json_list.append(json_dict)
+        return HttpResponse(json.dumps(json_list),content_type='application/json')
+    
 class update_hostinfo(APIView):
     '''
     Ansible 更新主机硬件信息
