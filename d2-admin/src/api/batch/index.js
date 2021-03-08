@@ -7,3 +7,11 @@ export function  getselecthostgroup(params) {
     params
   })
 }
+
+export function  getgroup2host(params) {
+  return request ({
+    url: process.env.VUE_APP_BASE_API + '/api/assets/getgroup2host/',
+    method: 'get',
+    params
+  })
+}
