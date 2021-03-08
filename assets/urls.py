@@ -1,6 +1,6 @@
 # -*- coding:utf-8 -*-
 from rest_framework.routers import DefaultRouter
-from assets.views import HostGroupViewSet,HostViewSet,RemoteUserBindHostViewSet,RemoteUserViewSet,Host2GroupViewset,HostGroupMemberViewset
+from assets.views import HostGroupViewSet,HostViewSet,RemoteUserBindHostViewSet,RemoteUserViewSet,Host2GroupViewset,HostGroupMemberViewset,GetGroup2Hosts
 from django.urls import re_path
 from .monitor import cpu,memory
 from django.views.decorators.csrf import csrf_exempt
@@ -18,6 +18,7 @@ router.register("hostgroupmember", HostGroupMemberViewset, basename="hostgroupme
 urlpatterns = [
     re_path('^update_hostinfo/$',update_hostinfo.as_view(),name='update_hostinfo'),
     re_path('^gethostgroup/$',GetHostGroup.as_view(),name='gethostgroup'),
+    re_path('^getgroup2host/$',GetGroup2Hosts.as_view(),name='getgroup2host'),
     re_path(r'cpu/add/$', cpu.CpuView.as_view({'post': 'add'}), name='cpu'),
     re_path(r'memory/add/$', memory.MemoryView.as_view({'post': 'add'}), name='memory'),
 
