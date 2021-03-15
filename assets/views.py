@@ -103,24 +103,19 @@ class GetHostGroup(APIView):
 class GetGroup2Hosts(APIView):
     def get(self,request):
         json_list = []
-        groups = request.GET.get('hostgroup')
-        print(groups)
-        if groups == 0  or groups == -1:
+        group = request.GET.get('hostgroup')
+        if group == '0'  or group == '-1':
             host = RemoteUserBindHost.objects.all()
-            for h in  host:
-                json_dict = {
-                    "value": h.id,
-                    "label": h.ip
-                }
-                json_list.append(json_dict)
+            print('111')
         else:
-            host = RemoteUserBindHost.objects.filter(host_group__id=groups)
-            for h in  host:
-                json_dict = {
-                    "value": h.id,
-                    "label": h.ip
-                }
-                json_list.append(json_dict)
+            host = RemoteUserBindHost.objects.filter(host_group__id=group)
+        print(host)
+        for h in  host:
+            json_dict = {
+                "value": h.id,
+                "label": h.ip
+            }
+            json_list.append(json_dict)
         return HttpResponse(json.dumps(json_list),content_type='application/json')
     
 class update_hostinfo(APIView):

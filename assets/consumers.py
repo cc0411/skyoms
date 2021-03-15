@@ -127,7 +127,6 @@ class Cmd(WebsocketConsumer):
             self.send(data['text'])
         except Exception:
             print("send message error: {0}".format(traceback.format_exc()))
-            #logger.error("send message error: {0}".format(traceback.format_exc()))
 
     def close_channel(self, data):
         try:
@@ -135,7 +134,6 @@ class Cmd(WebsocketConsumer):
             time.sleep(0.3)
             self.close()
         except Exception:
-            #logger.error("close channel error: {0}".format(traceback.format_exc()))
             print("close channel error: {0}".format(traceback.format_exc()))
 
 class Script(WebsocketConsumer):

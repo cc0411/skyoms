@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'channels',
     'corsheaders',
     'rest_framework',
     'django_filters',
@@ -49,7 +50,7 @@ INSTALLED_APPS = [
     'vms.apps.VmsConfig',
     'assets.apps.AssetsConfig',
     'django_celery_beat',
-    'channels',
+
 ]
 
 AUTH_USER_MODEL ='users.Userprofile'
@@ -130,7 +131,7 @@ DATABASES = {
 
 # websocket
 #REDIS_URL = 'redis://:Redis@123@127.0.0.1:6379/0'
-ASGI_APPLICATION = 'skyoms.routing.application'
+ASGI_APPLICATION = 'skyoms.asgi.application'
 CHANNEL_LAYERS = {
     'default': {
         'BACKEND': 'channels_redis.core.RedisChannelLayer',
@@ -179,7 +180,7 @@ USE_TZ = False
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
 STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, "static")
+#STATIC_ROOT = os.path.join(BASE_DIR, "static")
 STATICFILES_DIRS = [
     BASE_DIR / "static",
     BASE_DIR / "d2-admin/dist"
